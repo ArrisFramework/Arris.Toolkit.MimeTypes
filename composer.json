@@ -1,0 +1,22 @@
+{
+    "name": "karelwintersky/arris.toolkit.mimetypes",
+    "description": "Resolves Extension by MimeType and vice versa",
+    "homepage": "https://github.com/ArrisFramework/Arris.Toolkit.MimeTypes",
+    "type": "library",
+    "license": "MIT",
+    "keywords": ["mime", "mimetype", "dictionary", "map"],
+    "authors": [
+        {
+            "name": "Karel Wintersky",
+            "email": "karel.wintersky@yandex.ru"
+        }
+    ],
+    "require": {
+        "php": ">=7.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Arris\\Toolkit\\": "src/"
+        }
+    }
+}
