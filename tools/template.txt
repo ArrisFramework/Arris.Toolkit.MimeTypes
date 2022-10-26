@@ -1,0 +1,72 @@
+<?php
+
+namespace Arris\Toolkit;
+
+/**
+ * Provides mappings of file extensions to mimetypes.
+ * API-compatible with Guzzle\Http\Mimetypes (http://guzzlephp.org).
+ * @link https://svn.apache.org/repos/asf/httpd/httpd/branches/2.4.x/docs/conf/mime.types
+ */
+class Mimetypes
+{
+    /**
+     * @var self
+     */
+    protected static $instance;
+
+    /**
+     * Returns an associative array with extension => mimetype mappings.
+     *
+     * Generated from source on %%generate_datetime%%
+     *
+     * @return array An associative array with extension => mimetype mappings.
+     */
+    public function getMimeTypes(): array
+    {
+        %%array_mime_types%%
+    }
+
+    /**
+     * Get a singleton instance of the class
+     *
+     * @return self
+     * @codeCoverageIgnore
+     */
+    public static function getInstance(): Mimetypes
+    {
+        if (!self::$instance) {
+            self::$instance = new self();
+        }
+
+        return self::$instance;
+    }
+
+    /**
+     * Get a mimetype value from a file extension
+     *
+     * @param string $extension File extension
+     *
+     * @return string|null
+     *
+     */
+    public function fromExtension(string $extension): ?string
+    {
+        $mimetypes = $this->getMimeTypes();
+        return $mimetypes[$extension] ?? null;
+    }
+
+    /**
+     * Get a mimetype from a filename
+     *
+     * @param string $filename Filename to generate a mimetype from
+     *
+     * @return string|null
+     */
+    public function fromFilename(string $filename): ?string
+    {
+        return $this->fromExtension(pathinfo($filename, PATHINFO_EXTENSION));
+    }
+
+}
+
+# -eof-
