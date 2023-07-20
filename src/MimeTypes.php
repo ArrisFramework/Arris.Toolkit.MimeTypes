@@ -7,23 +7,14 @@ namespace Arris\Toolkit;
  * API-compatible with Guzzle\Http\Mimetypes (http://guzzlephp.org).
  * @link https://svn.apache.org/repos/asf/httpd/httpd/branches/2.4.x/docs/conf/mime.types
  */
-class Mimetypes
+class MimeTypes
 {
     /**
-     * @var self
-     */
-    protected static $instance;
-
-    /**
-     * Returns an associative array with extension => mimetype mappings.
+     * An associative array with extension => mimetype mappings.
      *
-     * Generated from source on 26 Oct 2022, 9:26am MSK
-     *
-     * @return array An associative array with extension => mimetype mappings.
+     * Generated from source on 20 Jul 2023, 7:56pm MSK
      */
-    public function getMimeTypes(): array
-    {
-        return [
+    protected static $mime_types = [
     '3dml' => 'text/vnd.in3d.3dml',
     '3ds' => 'image/x-3ds',
     '3g2' => 'video/3gpp2',
@@ -306,6 +297,7 @@ class Mimetypes
     'geo' => 'application/vnd.dynageo',
     'gex' => 'application/vnd.geometry-explorer',
     'ggb' => 'application/vnd.geogebra.file',
+    'ggs' => 'application/vnd.geogebra.slides',
     'ggt' => 'application/vnd.geogebra.tool',
     'ghf' => 'application/vnd.groove-help',
     'gif' => 'image/gif',
@@ -483,6 +475,7 @@ class Mimetypes
     'mime' => 'message/rfc822',
     'mj2' => 'video/mj2',
     'mjp2' => 'video/mj2',
+    'mjs' => 'text/javascript',
     'mk3d' => 'video/x-matroska',
     'mka' => 'audio/x-matroska',
     'mks' => 'video/x-matroska',
@@ -586,6 +579,7 @@ class Mimetypes
     'opf' => 'application/oebps-package+xml',
     'opml' => 'text/x-opml',
     'oprc' => 'application/vnd.palm',
+    'opus' => 'audio/ogg',
     'org' => 'application/vnd.lotus-organizer',
     'osf' => 'application/vnd.yamaha.openscoreformat',
     'osfpvg' => 'application/vnd.yamaha.openscoreformat.osfpvg+xml',
@@ -927,6 +921,7 @@ class Mimetypes
     'vxml' => 'application/voicexml+xml',
     'w3d' => 'application/x-director',
     'wad' => 'application/x-doom',
+    'wasm' => 'application/wasm',
     'wav' => 'audio/x-wav',
     'wax' => 'audio/x-ms-wax',
     'wbmp' => 'image/vnd.wap.wbmp',
@@ -1043,7 +1038,54 @@ class Mimetypes
     'zirz' => 'application/vnd.zul',
     'zmm' => 'application/vnd.handheld-entertainment+xml',
     123 => 'application/vnd.lotus-1-2-3',
-];
+]
+    ;
+
+    public function __construct($types = [])
+    {
+        $this->types = empty($types) ? self::getMimeTypes() : $types;
+    }
+
+    /**
+     * Returns an associative array with extension => mimetype mappings.
+     *
+     * Generated from source on 26 Oct 2022, 9:26am MSK
+     *
+     * @return array An associative array with extension => mimetype mappings.
+     */
+    public static function getMimeTypes():array
+    {
+        return self::$mime_types;
+    }
+
+    /**
+     * Get the first file extension (without the dot) that matches the given MIME type.
+     *
+     * @param $mime_type
+     * @return string
+     */
+    public static function getExtension($mime_type):string
+    {
+        $mime_type = self::normalize($mime_type);
+
+        $found = array_search($mime_type, self::$mime_types);
+        return ($found === false) ? '' : $found;
+    }
+
+    /**
+     * Get the first MIME type that matches the given file extension (maybe with dot)
+     *
+     * @param string $extension
+     * @return string
+     */
+    public static function getMimeType(string $extension):string
+    {
+        $extension = self::normalize($extension);
+
+        return
+            array_key_exists($extension, self::$mime_types)
+            ? self::$mime_types[$extension]
+            : '';
     }
 
     /**
@@ -1052,7 +1094,7 @@ class Mimetypes
      * @return self
      * @codeCoverageIgnore
      */
-    public static function getInstance(): Mimetypes
+    public static function getInstance(): MimeTypes
     {
         if (!self::$instance) {
             self::$instance = new self();
@@ -1085,6 +1127,21 @@ class Mimetypes
     public function fromFilename(string $filename): ?string
     {
         return $this->fromExtension(pathinfo($filename, PATHINFO_EXTENSION));
+    }
+
+    /**
+     * Normalize the input string using lowercase/trim.
+     *
+     * @param string $input - The string to normalize.
+     * @return string - The normalized string.
+     */
+    private static function normalize(string $input):string
+    {
+        return trim(
+            strtolower(
+                trim($input)),
+            '.'
+        );
     }
 
 }

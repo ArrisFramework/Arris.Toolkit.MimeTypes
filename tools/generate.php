@@ -93,12 +93,13 @@ $text .= "        ];";*/
 # WRITE PHP CLASS
 $content = file_get_contents(__DIR__ . '/template.txt');
 $content = str_replace('%%generate_datetime%%', $template_generate_date, $content);
-$content = str_replace('%%array_mime_types%%', "return " . var_export_short($mimes, true) . ";", $content);
+$content = str_replace('%%return_array_mime_types%%', "return " . var_export_short($mimes, true) . ";", $content);
+$content = str_replace('%%array_mime_types%%', var_export_short($mimes, true), $content);
 
 //$content = str_replace('%%array_mime_types%%', $text, $content); // преформатированный красивый вывод
 
 file_put_contents(
-    __DIR__ . '/../src/Mimetypes.php',
+    __DIR__ . '/../src/MimeTypes.php',
     $content
 );
 

@@ -7,23 +7,61 @@ namespace Arris\Toolkit;
  * API-compatible with Guzzle\Http\Mimetypes (http://guzzlephp.org).
  * @link https://svn.apache.org/repos/asf/httpd/httpd/branches/2.4.x/docs/conf/mime.types
  */
-class Mimetypes
+class MimeTypes
 {
     /**
-     * @var self
+     * An associative array with extension => mimetype mappings.
+     *
+     * Generated from source on %%generate_datetime%%
      */
-    protected static $instance;
+    protected static $mime_types = %%array_mime_types%%
+    ;
+
+    public function __construct($types = [])
+    {
+        $this->types = empty($types) ? self::getMimeTypes() : $types;
+    }
 
     /**
      * Returns an associative array with extension => mimetype mappings.
      *
-     * Generated from source on %%generate_datetime%%
+     * Generated from source on 26 Oct 2022, 9:26am MSK
      *
      * @return array An associative array with extension => mimetype mappings.
      */
-    public function getMimeTypes(): array
+    public static function getMimeTypes():array
     {
-        %%array_mime_types%%
+        return self::$mime_types;
+    }
+
+    /**
+     * Get the first file extension (without the dot) that matches the given MIME type.
+     *
+     * @param $mime_type
+     * @return string
+     */
+    public static function getExtension($mime_type):string
+    {
+        $mime_type = self::normalize($mime_type);
+
+        $found = array_search($mime_type, self::$mime_types);
+        return ($found === false) ? '' : $found;
+    }
+
+    /**
+     * Get the first MIME type that matches the given file extension (maybe with dot)
+     *
+     * @param string $extension
+     * @return string
+     */
+    public static function getMimeType(string $extension):string
+    {
+        $extension = self::normalize($extension);
+
+        return
+            array_key_exists($extension, self::$mime_types)
+            ? self::$mime_types[$extension]
+            : '';
     }
 
     /**
@@ -32,7 +70,7 @@ class Mimetypes
      * @return self
      * @codeCoverageIgnore
      */
-    public static function getInstance(): Mimetypes
+    public static function getInstance(): MimeTypes
     {
         if (!self::$instance) {
             self::$instance = new self();
@@ -65,6 +103,21 @@ class Mimetypes
     public function fromFilename(string $filename): ?string
     {
         return $this->fromExtension(pathinfo($filename, PATHINFO_EXTENSION));
+    }
+
+    /**
+     * Normalize the input string using lowercase/trim.
+     *
+     * @param string $input - The string to normalize.
+     * @return string - The normalized string.
+     */
+    private static function normalize(string $input):string
+    {
+        return trim(
+            strtolower(
+                trim($input)),
+            '.'
+        );
     }
 
 }
