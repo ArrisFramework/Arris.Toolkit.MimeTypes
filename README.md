@@ -36,7 +36,13 @@ map/dictionary/associative array by pretty much every programming language with 
 
 It also generates a backing PHP class if you want to use the data in PHP-land.
 
-### Step 4 
+### Step 4
+
+```bash
+make test
+```
+
+### Step 5 
 
 Update repository (commit, push, pull request)
 
@@ -65,16 +71,20 @@ And use it in your scripts:
 ```php
 
 use Arris\Toolkit;
-$type = Mimetypes::getInstance()->fromExtension('html');
+$ext = MimeTypes::getExtension('application/json');
 
-// => text/html
+// => .json
+
+$type = MimeTypes::getMimeType('.json');
+
+// 'application/json'
 ```
 
 ## License & Copyright
 
 Original idea: 2010-2013 [Ryan Parman](http://ryanparman.com).
 
-Refactored: 2022 [Karel Wintersky](https://github.com/KarelWintersky)
+Refactored: 2023 [Karel Wintersky](https://github.com/KarelWintersky)
 
 removed unnecessary Twig template engine and `dflydev/apache-mime-types` (repository load/mapper)
 
