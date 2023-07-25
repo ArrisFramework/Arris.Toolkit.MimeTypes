@@ -17,92 +17,32 @@ class MimeTypes
     protected static $mime_types = %%array_mime_types%%
     ;
 
-    public function __construct($types = [])
-    {
-        $this->types = empty($types) ? self::getMimeTypes() : $types;
-    }
-
-    /**
-     * Returns an associative array with extension => mimetype mappings.
-     *
-     * Generated from source on 26 Oct 2022, 9:26am MSK
-     *
-     * @return array An associative array with extension => mimetype mappings.
-     */
     public static function getMimeTypes():array
     {
         return self::$mime_types;
     }
 
-    /**
-     * Get the first file extension (without the dot) that matches the given MIME type.
-     *
-     * @param $mime_type
-     * @return string
-     */
-    public static function getExtension($mime_type):string
+    public static function getExtension(string $mime_type):string
     {
-        $mime_type = self::normalize($mime_type);
+        $mime_type = strtolower(trim($mime_type));
 
         $found = array_search($mime_type, self::$mime_types);
         return ($found === false) ? '' : $found;
     }
 
-    /**
-     * Get the first MIME type that matches the given file extension (maybe with dot)
-     *
-     * @param string $extension
-     * @return string
-     */
-    public static function getMimeType(string $extension):string
+    public static function fromExtension(string $extension):string
     {
         $extension = self::normalize($extension);
 
         return
             array_key_exists($extension, self::$mime_types)
-            ? self::$mime_types[$extension]
-            : '';
+                ? self::$mime_types[$extension]
+                : '';
     }
 
-    /**
-     * Get a singleton instance of the class
-     *
-     * @return self
-     * @codeCoverageIgnore
-     */
-    public static function getInstance(): MimeTypes
+    public static function fromFilename(string $filename):string
     {
-        if (!self::$instance) {
-            self::$instance = new self();
-        }
-
-        return self::$instance;
-    }
-
-    /**
-     * Get a mimetype value from a file extension
-     *
-     * @param string $extension File extension
-     *
-     * @return string|null
-     *
-     */
-    public function fromExtension(string $extension): ?string
-    {
-        $mimetypes = $this->getMimeTypes();
-        return $mimetypes[$extension] ?? null;
-    }
-
-    /**
-     * Get a mimetype from a filename
-     *
-     * @param string $filename Filename to generate a mimetype from
-     *
-     * @return string|null
-     */
-    public function fromFilename(string $filename): ?string
-    {
-        return $this->fromExtension(pathinfo($filename, PATHINFO_EXTENSION));
+        return self::fromExtension( pathinfo($filename, PATHINFO_EXTENSION));
     }
 
     /**

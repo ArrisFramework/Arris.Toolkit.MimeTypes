@@ -1,3 +1,9 @@
+# What is it?  %%generate_datetime%%
+
+PHP package for converting file extensions to MIME types and vice versa.
+
+Uses the MIME content type for a file as determined by using information from the `magic.mime` file.
+
 # Mimetypes
 
 Creates a JSON document containing a thorough list of file extensions => mime types as provided by the
@@ -75,10 +81,17 @@ $ext = MimeTypes::getExtension('application/json');
 
 // => .json
 
-$type = MimeTypes::getMimeType('.json');
+$type = MimeTypes::fromExtension('.json');
 
 // 'application/json'
+// or (use alias)
+
+$type = MimeTypes::getMimeType('.json');
 ```
+
+NB:
+
+'fallback' function `mime_content_type()` return all same data. 
 
 ## License & Copyright
 

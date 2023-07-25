@@ -7,7 +7,7 @@ class MimeTypesTest extends TestCase {
 
     public function testGetMimeTypeUndefined()
     {
-        $this->assertEquals('', MimeTypes::getMimeType('undefined'));
+        $this->assertEquals('', MimeTypes::fromExtension('undefined'));
     }
 
     public function testGetExtensionUndefined()
@@ -18,7 +18,7 @@ class MimeTypesTest extends TestCase {
     public function testVaidExtensions()
     {
         $this->assertEquals('json', MimeTypes::getExtension('application/json'));
-        $this->assertEquals('application/json', MimeTypes::getMimeType('json'));
+        $this->assertEquals('application/json', MimeTypes::fromExtension('.json'));
     }
 
 }
