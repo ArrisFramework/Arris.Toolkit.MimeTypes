@@ -85,9 +85,6 @@ $ext = MimeTypes::getExtension('application/json');
 $type = MimeTypes::fromExtension('.json');
 
 // 'application/json'
-// or (use alias)
-
-$type = MimeTypes::getMimeType('.json');
 ```
 
 NB:

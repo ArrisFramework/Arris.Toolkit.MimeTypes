@@ -4,11 +4,13 @@ namespace Arris\Toolkit;
 
 /**
  * Provides mappings of file extensions to mimetypes.
- * API-compatible with Guzzle\Http\Mimetypes (http://guzzlephp.org).
+
  * @link https://svn.apache.org/repos/asf/httpd/httpd/branches/2.4.x/docs/conf/mime.types
  */
-class MimeTypes
+class MimeTypes implements MimeTypesInterface
 {
+    const GENERATED_AT = '%%generate_datetime%%';
+
     /**
      * An associative array with extension => mimetype mappings.
      *
@@ -17,27 +19,26 @@ class MimeTypes
     protected static $mime_types = %%array_mime_types%%
     ;
 
-    public static function getMimeTypes():array
+    public static function getAllMimeTypes():array
     {
-        return self::$mime_types;
+        return self::$mime_types['extensions'];
+    }
+
+    public static function getAllExtensions():array
+    {
+        return self::$mime_types['mimes'];
     }
 
     public static function getExtension(string $mime_type):string
     {
-        $mime_type = strtolower(trim($mime_type));
-
-        $found = array_search($mime_type, self::$mime_types);
-        return ($found === false) ? '' : $found;
+        return array_key_exists($mime_type, self::$mime_types['extensions']) ? self::$mime_types['extensions'][$mime_type] : '';
     }
 
     public static function fromExtension(string $extension):string
     {
         $extension = self::normalize($extension);
 
-        return
-            array_key_exists($extension, self::$mime_types)
-                ? self::$mime_types[$extension]
-                : '';
+        return array_key_exists($extension, self::$mime_types['mimes']) ? self::$mime_types['mimes'][$extension] : '';
     }
 
     public static function fromFilename(string $filename):string

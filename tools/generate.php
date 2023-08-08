@@ -1,4 +1,3 @@
-#! /usr/bin/env php
 <?php
 
 function var_export_short($expression, $return = false): ?string
@@ -21,61 +20,87 @@ function var_export_short($expression, $return = false): ?string
 
 $template_generate_date = date('j M Y, g:ia T');
 
-$downloaded_mimes = file(__DIR__ . '/mime.types', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+$fn_source_types = __DIR__ . '/mime.types';
+$fn_source_types_custom = __DIR__ . '/mime.types.custom';
 
-if (empty($downloaded_mimes)) {
-    die('mime.types is empty or not downloded');
+if (!is_readable($fn_source_types)) {
+    die('mime.types is not downloaded or not readable');
+}
+$mime_types_default_text = file($fn_source_types, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+
+$mime_types_custom_text = [];
+if (is_readable($fn_source_types_custom)) {
+    $mime_types_custom_text = file($fn_source_types_custom, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 }
 
-$custom_mimes = file(__DIR__ . '/mime.types.custom', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+$source_mimes = array_merge($mime_types_custom_text, $mime_types_default_text);
 
-$source_mimes = array_merge($custom_mimes, $downloaded_mimes);
+$defs = [];
 
-$lines = [];
-
-// clear comments
 foreach ($source_mimes as $line) {
-    if (strpos($line, '#') !== 0) {
+    $line = trim(preg_replace('~\\#.*~', '', $line));
+
+    if (!empty($line)) {
         preg_match_all('/^((\w|\/|\.|-|\+)+)(\s+)([^\n]*)$/im', $line, $match);
+
         $type = $match[1][0];
         $extensions = explode(' ', $match[4][0]);
 
-        if (!array_key_exists($type, $lines)) {
-            $lines[$type] = $extensions;
+        if (!array_key_exists($type, $defs)) {
+            $defs[$type] = $extensions;
         }
     }
 }
 
-$mimes = [];
+ksort($defs);
 
-foreach ($lines as $type => $extensions) {
-    foreach ($extensions as $extension) {
-        if (!isset($lines[$extension])) {
-            $mimes[$extension] = $type;
-        }
+$mapping = [
+    // ext -> mime
+    'mimes'         =>  [],
+
+    // mime -> ext
+    'extensions'    =>  []
+];
+
+foreach ($defs as $mime => $exts) {
+    foreach ($exts as $extension) {
+        // $mapping['mimes'][$extension][] = $mime;
+        // $mapping['mimes'][$extension] = array_unique($mapping['mimes'][$extension]);
+        $mapping['mimes'][$extension] = $mime;
+
+        // $mapping['extensions'][$mime][] = $extension;
+        // $mapping['extensions'][$mime] = array_unique($mapping['extensions'][$mime]);
     }
+    $mapping['extensions'][$mime] = $exts[0];
 }
-$customize_json = __DIR__ . '/customize.json';
 
-if (file_exists($customize_json)) {
-    $entries = json_decode(file_get_contents($customize_json), true);
+if (is_readable(__DIR__ . '/customize.json')) {
+    $entries = json_decode(file_get_contents(__DIR__ . '/customize.json'), true);
 
-    foreach ($entries as $extensions => $type) {
+    foreach ($entries as $extensions => $mime) {
         $extensions = explode(' ', $extensions);
 
         foreach ($extensions as $extension) {
-            $mimes[$extension] = $type;
+            $mapping['mimes'][$extension] = $mime;
+        }
+
+        if (!array_key_exists($mime, $mapping['extensions'])) {
+            $mapping['extensions'][$mime] = $extensions[0];
         }
     }
 }
+ksort($mapping['mimes']);
+ksort($mapping['extensions']);
 
-// WRITE JSON DOCUMENT
-// ksort($mimes);
+var_dump($mapping);
+
+/**
+ * Output
+ */
 
 $mimetypes_json = __DIR__ . '/mimetypes.json';
-
-if (file_put_contents($mimetypes_json, json_encode($mimes, JSON_PRETTY_PRINT))) {
-    echo print_r($mimes, true)
+if (file_put_contents($mimetypes_json, json_encode($mapping, JSON_PRETTY_PRINT))) {
+    echo print_r($mapping, true)
         . PHP_EOL
         . "\033[01;32mSuccessfully wrote {$mimetypes_json}\033[00m"
         . PHP_EOL;
@@ -83,25 +108,14 @@ if (file_put_contents($mimetypes_json, json_encode($mimes, JSON_PRETTY_PRINT))) 
     echo "Failed to write {$mimetypes_json}. Please ensure that this file system location is writable." . PHP_EOL;
 }
 
-/*$max_ext_length = 0;
-foreach ($mimes as $ext => $type) {
-    $max_ext_length = max($max_ext_length, strlen($ext));
-}
+/*
+ * WRITE PHP CLASS
+ */
 
-$text = '';
-$text .= "return [" . PHP_EOL;
-foreach ($mimes as $ext => $type) {
-    $text .= "            '{$ext}' ";
-    // $text .= str_repeat(' ', $max_ext_length + 2 - strlen($ext));
-    $text .= "=> '{$type}'," . PHP_EOL;
-}
-$text .= "        ];";*/
-
-# WRITE PHP CLASS
 $content = file_get_contents(__DIR__ . '/template.txt');
 $content = str_replace('%%generate_datetime%%', $template_generate_date, $content);
-$content = str_replace('%%return_array_mime_types%%', "return " . var_export_short($mimes, true) . ";", $content);
-$content = str_replace('%%array_mime_types%%', var_export_short($mimes, true), $content);
+// $content = str_replace('%%return_array_mime_types%%', "return " . var_export_short($mapping, true) . ";", $content);
+$content = str_replace('%%array_mime_types%%', var_export_short($mapping, true), $content);
 
 //$content = str_replace('%%array_mime_types%%', $text, $content); // преформатированный красивый вывод
 
@@ -114,4 +128,5 @@ echo "\033[01;32mSuccessfully wrote " . __DIR__ . '/src/Mimetypes.php' . "\033[0
 
 // Done.
 echo PHP_EOL;
+
 

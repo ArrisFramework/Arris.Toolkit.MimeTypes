@@ -10,7 +10,7 @@ build:    ##@build Generate new mimetypes.json and src\Mimetypes.php
 	@php ./tools/generate.php
 
 test:		##@test PHPUnit tests
-	@php ./vendor/bin/phpunit
+	@php ./vendor/bin/phpunit --bootstrap vendor/autoload.php --testdox tests
 
 # ------------------------------------------------
 # Add the following 'help' target to your makefile, add help text after each target name starting with '\#\#'

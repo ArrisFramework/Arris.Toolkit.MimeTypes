@@ -4,12 +4,20 @@ namespace Arris\Toolkit;
 
 interface MimeTypesInterface
 {
+
     /**
-     * Get all available mime types
+     * Get all available mimetypes as array keys
      *
-     * @return string[]
+     * @return array
      */
-    public static function getMimeTypes():array;
+    public static function getAllMimeTypes():array;
+
+    /**
+     * Get all available extensios (as array keys)
+     *
+     * @return array
+     */
+    public static function getAllExtensions():array;
 
     /**
      * Get EXTENSION from MIMETYPE string
@@ -20,7 +28,7 @@ interface MimeTypesInterface
     public static function getExtension(string $mime_type):string;
 
     /**
-     * Get mimetype from extension (extension may contain dot)
+     * Get MIMETYPE from EXTENSION (extension may contain dot)
      *
      * @param string $extension
      * @return string
@@ -28,24 +36,12 @@ interface MimeTypesInterface
     public static function fromExtension(string $extension):string;
 
     /**
-     * Alias of fromExtension()
-     *
-     * @param string $extension
-     * @return string
-     */
-    public static function getMimeType(string $extension):string;
-
-    /**
-     * Get mimetype from filename with extension
+     * get MIMETYPE from filename with extension
      *
      * @param string $filename
      * @return string
      */
     public static function fromFilename(string $filename):string;
-
-
-
-
 
 
 }
