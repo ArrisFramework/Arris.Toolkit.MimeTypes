@@ -26,8 +26,9 @@ wget --no-check-certificate https://svn.apache.org/repos/asf/httpd/httpd/branche
 
 ### Step 2 (optional)
 
-Update the provided `customize.json` document with any additional mimetypes to define, or any that you would like to
-override.
+Update the provided `mime.types.custom`. This file is in the same format as `mime.types` but the mappings in this file take precedence. 
+
+Update the provided `customize.json` document with any additional mimetypes to define, or any that you would like to override. 
 
 ### Step 3
 

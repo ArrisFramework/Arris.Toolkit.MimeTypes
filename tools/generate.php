@@ -27,15 +27,22 @@ if (empty($downloaded_mimes)) {
     die('mime.types is empty or not downloded');
 }
 
+$custom_mimes = file(__DIR__ . '/mime.types.custom', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+
+$source_mimes = array_merge($custom_mimes, $downloaded_mimes);
+
 $lines = [];
 
-foreach ($downloaded_mimes as $line) {
+// clear comments
+foreach ($source_mimes as $line) {
     if (strpos($line, '#') !== 0) {
         preg_match_all('/^((\w|\/|\.|-|\+)+)(\s+)([^\n]*)$/im', $line, $match);
         $type = $match[1][0];
         $extensions = explode(' ', $match[4][0]);
 
-        $lines[$type] = $extensions;
+        if (!array_key_exists($type, $lines)) {
+            $lines[$type] = $extensions;
+        }
     }
 }
 
@@ -63,7 +70,7 @@ if (file_exists($customize_json)) {
 }
 
 // WRITE JSON DOCUMENT
-ksort($mimes);
+// ksort($mimes);
 
 $mimetypes_json = __DIR__ . '/mimetypes.json';
 
