@@ -17,6 +17,7 @@ class MimeTypes implements MimeTypesInterface
      * Generated from source on 8 Aug 2023, 10:48pm MSK
      */
     protected static $mime_types = [
+
     'mimes' => [
         '3dml' => 'text/vnd.in3d.3dml',
         '3ds' => 'image/x-3ds',
@@ -1044,6 +1045,7 @@ class MimeTypes implements MimeTypesInterface
         'zmm' => 'application/vnd.handheld-entertainment+xml',
         123 => 'application/vnd.lotus-1-2-3',
     ],
+
     'extensions' => [
         'application/andrew-inset' => 'ez',
         'application/applixware' => 'aw',
@@ -1855,14 +1857,14 @@ class MimeTypes implements MimeTypesInterface
 
     public static function getExtension(string $mime_type):string
     {
-        return array_key_exists($mime_type, self::$mime_types['extensions']) ? self::$mime_types['extensions'][$mime_type] : '';
+        return \array_key_exists($mime_type, self::$mime_types['extensions']) ? self::$mime_types['extensions'][$mime_type] : '';
     }
 
     public static function fromExtension(string $extension):string
     {
         $extension = self::normalize($extension);
 
-        return array_key_exists($extension, self::$mime_types['mimes']) ? self::$mime_types['mimes'][$extension] : '';
+        return \array_key_exists($extension, self::$mime_types['mimes']) ? self::$mime_types['mimes'][$extension] : '';
     }
 
     public static function fromFilename(string $filename):string
@@ -1878,9 +1880,9 @@ class MimeTypes implements MimeTypesInterface
      */
     private static function normalize(string $input):string
     {
-        return trim(
-            strtolower(
-                trim($input)),
+        return \trim(
+            \strtolower(
+                \trim($input)),
             '.'
         );
     }
