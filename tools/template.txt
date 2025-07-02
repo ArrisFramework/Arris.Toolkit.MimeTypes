@@ -15,8 +15,11 @@ class MimeTypes implements MimeTypesInterface
      * An associative array with extension => mimetype mappings.
      *
      * Generated from source on %%generate_datetime%%
+     *
+     * mimes:       EXT      -> MIMETYPE
+     * extensions:  MIMETYPE -> EXT
      */
-    protected static $mime_types = %%array_mime_types%%
+    protected static array $mime_types = %%array_mime_types%%
     ;
 
     public static function getAllMimeTypes():array
@@ -29,21 +32,30 @@ class MimeTypes implements MimeTypesInterface
         return self::$mime_types['mimes'];
     }
 
-    public static function getExtension(string $mime_type):string
+    public static function fromType(string $mimetype):string
     {
-        return \array_key_exists($mime_type, self::$mime_types['extensions']) ? self::$mime_types['extensions'][$mime_type] : '';
+        $mimetype = self::normalize($mimetype);
+        return array_key_exists($mimetype, self::$mime_types['extensions'])
+            ? self::$mime_types['extensions'][$mimetype]
+            : '';
+    }
+
+    public static function fromFile(string $path):string
+    {
+        return self::fromType(
+            self::getType($path)
+        );
     }
 
     public static function fromExtension(string $extension):string
     {
-        $extension = self::normalize($extension);
-
-        return \array_key_exists($extension, self::$mime_types['mimes']) ? self::$mime_types['mimes'][$extension] : '';
+       $extension = self::normalize($extension);
+       return array_key_exists($extension, self::$mime_types['mimes']) ? self::$mime_types['mimes'][$extension] : self::UNKNOWN_MIME_TYPE;
     }
 
-    public static function fromFilename(string $filename):string
+    public static function getType(string $path):string
     {
-        return self::fromExtension( pathinfo($filename, PATHINFO_EXTENSION));
+        return mime_content_type($path);
     }
 
     /**
@@ -61,6 +73,26 @@ class MimeTypes implements MimeTypesInterface
         );
     }
 
-}
+    // aliases
+
+    public static function getExtFromMime(string $mimetype):string
+    {
+        return self::fromType($mimetype);
+    }
+
+    public static function getExtFromFile(string $path):string
+    {
+        return self::fromFile($path);
+    }
+
+    public static function getMimeFromExt(string $extension):string
+    {
+        return self::fromExtension($extension);
+    }
+
+    public static function getMimeFromFile(string $path):string
+    {
+        return self::getType($path);
+    }
 
 # -eof-

@@ -5,6 +5,7 @@ namespace Arris\Toolkit;
 interface MimeTypesInterface
 {
 
+
     /**
      * Get all available mimetypes as array keys
      *
@@ -13,22 +14,33 @@ interface MimeTypesInterface
     public static function getAllMimeTypes():array;
 
     /**
-     * Get all available extensios (as array keys)
+     * Get all available extensions (as array keys)
      *
      * @return array
      */
     public static function getAllExtensions():array;
 
     /**
-     * Get EXTENSION from MIMETYPE string
+     * Возвращает расширение по mime-типу (строка):
+     * MIME -> EXT
      *
-     * @param string $mime_type
+     * @param string $mimetype
      * @return string
      */
-    public static function getExtension(string $mime_type):string;
+    public static function fromType(string $mimetype):string;
 
     /**
-     * Get MIMETYPE from EXTENSION (extension may contain dot)
+     * Возвращает расширение файла из mime-типа (файл)
+     * FILE -> MIME -> EXT
+     *
+     * @param string $path
+     * @return string
+     */
+    public static function fromFile(string $path):string;
+
+    /**
+     * Получить mime-тип из расширения (строка)
+     * EXT -> MIME
      *
      * @param string $extension
      * @return string
@@ -36,12 +48,44 @@ interface MimeTypesInterface
     public static function fromExtension(string $extension):string;
 
     /**
-     * get MIMETYPE from filename with extension
+     * Получить mime-тип из файла по пути
+     * FILE -> MIME
      *
-     * @param string $filename
+     * @param string $path
      * @return string
      */
-    public static function fromFilename(string $filename):string;
+    public static function getType(string $path):string;
+
+    // Aliases
+
+    /**
+     * MIME -> EXT
+     *
+     * @param string $mimetype
+     * @return string
+     */
+    public static function getExtFromMime(string $mimetype):string;
+
+    /**
+     * FILE -> MIME -> EXT
+     * @param string $path
+     * @return string
+     */
+    public static function getExtFromFile(string $path):string;
+
+    /**
+     * EXT -> MIME
+     * @param string $extension
+     * @return string
+     */
+    public static function getMimeFromExt(string $extension):string;
+
+    /**
+     * FILE -> MIME
+     * @param string $path
+     * @return string
+     */
+    public static function getMimeFromFile(string $path):string;
 
 
 }

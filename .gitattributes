@@ -6,6 +6,9 @@
 .gitignore		    export-ignore
 vendor			    export-ignore
 tools               export-ignore
-makefile            export-ignore
 tests               export-ignore
+
+makefile            export-ignore
 phpunit.xml         export-ignore
+test.php            export-ignore
+UPDATE.md           export-ignore

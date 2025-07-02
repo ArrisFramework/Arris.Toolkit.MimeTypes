@@ -119,10 +119,11 @@ $content = str_replace('%%array_mime_types%%', var_export_short($mapping, true),
 
 //$content = str_replace('%%array_mime_types%%', $text, $content); // преформатированный красивый вывод
 
-file_put_contents(
+/*file_put_contents(
     __DIR__ . '/../src/MimeTypes.php',
     $content
-);
+);*/
+file_put_contents(__DIR__ . '/export.php', $content);
 
 echo "\033[01;32mSuccessfully wrote " . __DIR__ . '/src/Mimetypes.php' . "\033[00m" . PHP_EOL;
 

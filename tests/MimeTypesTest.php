@@ -11,7 +11,7 @@ class MimeTypesTest extends TestCase {
      */
     public function testGetMimeTypeUndefined()
     {
-        $this->assertEquals('', MimeTypes::fromExtension('undefined'));
+        $this->assertEquals('application/octet-stream', MimeTypes::fromExtension('undefined'));
     }
 
     /**
@@ -20,7 +20,7 @@ class MimeTypesTest extends TestCase {
      */
     public function testGetExtensionUndefined()
     {
-        $this->assertEquals('', MimeTypes::getExtension('undefined'));
+        $this->assertEquals('', MimeTypes::fromType('undefined'));
     }
 
     /**
@@ -29,7 +29,7 @@ class MimeTypesTest extends TestCase {
      */
     public function testGetMimeType()
     {
-        $this->assertEquals('application/json', MimeTypes::fromExtension('.json'));
+        $this->assertEquals('application/json', MimeTypes::fromExtension('json'));
     }
 
     /**
@@ -38,7 +38,7 @@ class MimeTypesTest extends TestCase {
      */
     public function getGetExtension()
     {
-        $this->assertEquals('json', MimeTypes::getExtension('application/json'));
+        $this->assertEquals('json', MimeTypes::fromType('application/json'));
     }
 
     /**
@@ -47,7 +47,7 @@ class MimeTypesTest extends TestCase {
      */
     public function testGetMimeTypeJPEG()
     {
-        $this->assertEquals('image/jpeg', MimeTypes::fromExtension('.jpg'));
+        $this->assertEquals('image/jpeg', MimeTypes::fromExtension('jpg'));
     }
 
     /**
@@ -56,7 +56,12 @@ class MimeTypesTest extends TestCase {
      */
     public function getGetExtensionJPEG()
     {
-        $this->assertEquals('jpg', MimeTypes::getExtension('image/jpeg'));
+        $this->assertEquals('jpg', MimeTypes::fromType('image/jpeg'));
+    }
+
+    public function testGetTypeFromInvalidExtension()
+    {
+        $this->assertEquals(MimeTypes::UNKNOWN_MIME_TYPE, MimeTypes::fromExtension('foobar'));
     }
 
 }

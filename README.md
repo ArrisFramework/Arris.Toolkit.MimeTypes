@@ -1,72 +1,13 @@
-# What is it?  %%generate_datetime%%
+# What is it?
 
 PHP package for converting file extensions to MIME types and vice versa.
-
 Uses the MIME content type for a file as determined by using information from the `magic.mime` file.
 
-# Mimetypes
-
-Creates a JSON document containing a thorough list of file extensions => mime types as provided by the
-[Apache httpd project](http://httpd.apache.org).
-
-## How to update?
-
-### Step 1
-
-Download the latest copy of the Apache `mime-types` file into the same directory as the `generate` script
-
-```bash
-make update
-```
-
-or 
-```bash
-wget --no-check-certificate https://svn.apache.org/repos/asf/httpd/httpd/branches/2.4.x/docs/conf/mime.types -O ./tools/mime.types
-```
-
-### Step 2 (optional)
-
-Update the provided `mime.types.custom`. This file is in the same format as `mime.types` but the mappings in this file take precedence. 
-
-Update the provided `customize.json` document with any additional mimetypes to define, or any that you would like to override. 
-
-### Step 3
-
-Run the `generate` script:
-
-```bash
-make build
-```
-
-In the end, a `mimetypes.json` document will be generated. This JSON document can be easily parsed into a
-map/dictionary/associative array by pretty much every programming language with little effort.
-
-It also generates a backing PHP class if you want to use the data in PHP-land.
-
-### Step 4
-
-```bash
-make test
-```
-
-### Step 5 
-
-Update repository (commit, push, pull request)
+PHP-пакет для преобразования расширений файлов в MIME-типы и наоборот.
+Использует MIME-тип содержимого файла, определенный с помощью информации из файла magic.mime.
 
 ## Installation
 
-### Install with Composer
-
-If you're using [Composer](http://getcomposer.org) to manage dependencies, you can add the mimetypes with it.
-
-```json
-{
-    "require": {
-        "karelwintersky/arris.toolkit.mimetypes": ">=1.0"
-    }
-}
-```
-or
 ```
 composer require karelwintersky/arris.toolkit.mimetypes
 ```
@@ -76,28 +17,55 @@ composer require karelwintersky/arris.toolkit.mimetypes
 And use it in your scripts:
 
 ```php
-
 use Arris\Toolkit;
-$ext = MimeTypes::getExtension('application/json');
 
+echo "Get EXTENSION from MIME" . PHP_EOL;
+
+var_dump(
+    MimeTypes::getExtFromMime('application/json')
+);;
+var_dump(
+    MimeTypes::fromType('application/json')
+);
 // => .json
 
-$type = MimeTypes::fromExtension('.json');
+echo "Get EXTENSION from FILE" . PHP_EOL;
 
-// 'application/json'
+var_dump(
+    MimeTypes::getExtFromFile(__FILE__)
+);
+var_dump(
+    Toolkit\MimeTypes::fromFile(__FILE__);
+);
+// => .php
+
+echo "Get MIMETYPE from FILE" . PHP_EOL;
+
+var_dump(
+    MimeTypes::getMimeFromFile(__FILE__);
+);
+var_dump(
+    MimeTypes::getType(__FILE__);
+);
+
+
+echo "GET MIMETYPE from EXTENSION" . PHP_EOL;
+
+var_dump(
+    MimeTypes::getMimeFromExt('json');
+);
+var_dump(
+    MimeTypes::fromExtension('json')
+);
+
 ```
-
-NB:
-
-'fallback' function `mime_content_type()` return all same data. 
 
 ## License & Copyright
 
 Original idea: 2010-2013 [Ryan Parman](http://ryanparman.com).
 
-Refactored: 2023 [Karel Wintersky](https://github.com/KarelWintersky)
-
-removed unnecessary Twig template engine and `dflydev/apache-mime-types` (repository load/mapper)
+Refactored: 2023-2025 [Karel Wintersky](https://github.com/KarelWintersky) - removed unnecessary Twig template engine 
+and `dflydev/apache-mime-types` (repository load/mapper)
 
 Licensed for use under the terms of the [MIT license](http://www.opensource.org/licenses/mit-license.php).
 
